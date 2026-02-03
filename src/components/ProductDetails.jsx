@@ -128,7 +128,7 @@ const ProductDetails = () => {
       localStorage.setItem("carts", JSON.stringify(existingCarts));
 
       showToast("Order prepared successfully");
-      window.location.href = "/order";
+      window.location.href = "/checkout";
     }
   };
 

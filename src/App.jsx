@@ -30,8 +30,9 @@ import ProductSlider from "./components/NewProduct";
 import BillingDetails2 from "./pages/Billing";
 import BillingDetails from "./pages/Billings";
 import SubCategoryPage from "./pages/Subcategory";
-import OrderPage from "./pages/order";
+import CheckoutPage from "./pages/checkout";
 import OrderCart from "./pages/orders";
+import OrderConfirmed from "./pages/OrderConfirmed";
 
 const ContactButton = ({ icon: Icon, label, onClick, color }) => (
   <motion.div
@@ -221,7 +222,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/category/:category_name" element={<SubCategoryPage />} />
 
-        <Route path="/order" element={<OrderPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/checkout/orderconfirmed" element={<OrderConfirmed />} />
         <Route path="/orders" element={<OrderCart />} />
 
         <Route
