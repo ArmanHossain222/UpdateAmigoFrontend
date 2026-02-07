@@ -26,7 +26,11 @@ const CheckoutPage = () => {
   const [cartProducts, setCartProducts] = useState([]);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("carts") || "[]");
+    // Support both "carts" (buy now from product) and "cart" (checkout from cart)
+    const savedCart =
+      JSON.parse(localStorage.getItem("carts") || "[]").length > 0
+        ? JSON.parse(localStorage.getItem("carts") || "[]")
+        : JSON.parse(localStorage.getItem("cart") || "[]");
     if (savedCart.length === 0) {
       navigate("/");
     }
@@ -116,6 +120,7 @@ const CheckoutPage = () => {
       // Store order details in sessionStorage and navigate to confirmation page
       sessionStorage.setItem("orderDetails", JSON.stringify(orderData));
       localStorage.removeItem("carts");
+      localStorage.removeItem("cart");
       
       window.dataLayer.push({
         event: "purchase",

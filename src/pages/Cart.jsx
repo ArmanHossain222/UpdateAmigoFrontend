@@ -114,7 +114,7 @@ const CartPage = () => {
     });
 
     localStorage.setItem("cart", JSON.stringify(cartWithSizes));
-    navigate("/orders"); // Navigate to the order page
+    navigate("/checkout"); // Navigate to the checkout/billing page
   };
 
   const CartItem = ({ item }) => {

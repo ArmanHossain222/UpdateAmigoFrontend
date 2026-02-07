@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShoppingBag, Truck, CreditCard, CheckCircle, 
-  Mail, Phone, MapPin, Calendar, X, Loader 
-} from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Calendar,
+  CheckCircle,
+  Loader,
+  MapPin,
+  ShoppingBag,
+  Truck,
+  X,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BillingDetails = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
-    recipient_name: '',
-    recipient_address: '',
-    recipient_email: '',
-    recipient_phone: '',
-    city: '',
-    delivery_option: '',
-    additional_notes: ''
+    recipient_name: "",
+    recipient_address: "",
+    recipient_email: "",
+    recipient_phone: "",
+    city: "",
+    delivery_option: "",
+    additional_notes: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -28,21 +33,21 @@ const BillingDetails = () => {
   useEffect(() => {
     const loadCartData = () => {
       try {
-        const storageKey = state?.singleBuy ? 'orders' : 'cart';
-        const storedData = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        const storageKey = state?.singleBuy ? "orders" : "cart";
+        const storedData = JSON.parse(localStorage.getItem(storageKey) || "[]");
         const products = Array.isArray(storedData) ? storedData : [storedData];
 
-        const formattedProducts = products.map(item => ({
+        const formattedProducts = products.map((item) => ({
           ...item,
           unit_price: parseFloat(item.offer_price),
           totalAmount: parseFloat(item.offer_price) * item.quantity,
-          image: item.photos?.[0]?.file_name || 'default-product.jpg'
+          image: item.photos?.[0]?.file_name || "default-product.jpg",
         }));
 
         setCartProducts(formattedProducts);
       } catch (error) {
-        console.error('Error loading cart data:', error);
-        setErrors({ submit: 'Failed to load order details' });
+        console.error("Error loading cart data:", error);
+        setErrors({ submit: "Failed to load order details" });
       }
     };
 
@@ -66,10 +71,12 @@ const BillingDetails = () => {
       errorMessages.city = "শহর প্রয়োজন / City is required";
     }
     if (!phoneRegex.test(formData.recipient_phone)) {
-      errorMessages.recipient_phone = "সঠিক মোবাইল নম্বর লিখুন / Valid Bangladeshi phone number required";
+      errorMessages.recipient_phone =
+        "সঠিক মোবাইল নম্বর লিখুন / Valid Bangladeshi phone number required";
     }
     if (!formData.delivery_option) {
-      errorMessages.delivery_option = "ডেলিভারি অপশন নির্বাচন করুন / Select delivery option";
+      errorMessages.delivery_option =
+        "ডেলিভারি অপশন নির্বাচন করুন / Select delivery option";
     }
 
     setErrors(errorMessages);
@@ -86,30 +93,30 @@ const BillingDetails = () => {
         ...formData,
         order_date: new Date().toISOString(),
         order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-        products: cartProducts.map(product => ({
+        products: cartProducts.map((product) => ({
           product_id: product.id,
           product_name: product.product_name,
           quantity: product.quantity,
           size: product.size,
           unit_price: product.unit_price,
-          product_photo: `uploads/products/${product.image}`
+          product_photo: `uploads/products/${product.image}`,
         })),
         subtotal: cartProducts.reduce((sum, item) => sum + item.totalAmount, 0),
         shipping_cost: formData.delivery_option === "insideDhaka" ? 60 : 120,
-        total: 0
+        total: 0,
       };
 
       orderData.total = orderData.subtotal + orderData.shipping_cost;
 
-      const response = await fetch('https://api.amigofabric.com/api/order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
+      const response = await fetch("https://api.amigofabric.com/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
       });
 
-      if (!response.ok) throw new Error('Order submission failed');
+      if (!response.ok) throw new Error("Order submission failed");
 
-      localStorage.removeItem(state?.singleBuy ? 'orders' : 'cart');
+      localStorage.removeItem(state?.singleBuy ? "orders" : "cart");
       setOrderDetails(orderData);
       setShowModal(true);
     } catch (error) {
@@ -121,8 +128,8 @@ const BillingDetails = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const InvoiceModal = ({ order, onClose }) => (
@@ -145,7 +152,10 @@ const BillingDetails = () => {
               </h2>
               <p className="text-gray-600 mt-1">Thank you for your purchase</p>
             </div>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <X size={24} />
             </button>
           </div>
@@ -164,7 +174,11 @@ const BillingDetails = () => {
             <div className="space-y-2">
               <div className="flex items-center text-gray-600">
                 <Truck size={18} className="mr-2" />
-                <span>{order.delivery_option === 'insideDhaka' ? 'Inside Dhaka' : 'Outside Dhaka'}</span>
+                <span>
+                  {order.delivery_option === "insideDhaka"
+                    ? "Inside Dhaka"
+                    : "Outside Dhaka"}
+                </span>
               </div>
               <div className="flex items-center text-gray-600">
                 <MapPin size={18} className="mr-2" />
@@ -188,8 +202,12 @@ const BillingDetails = () => {
                   <tr key={index}>
                     <td className="px-4 py-3">{product.product_name}</td>
                     <td className="px-4 py-3 text-center">{product.size}</td>
-                    <td className="px-4 py-3 text-center">{product.quantity}</td>
-                    <td className="px-4 py-3 text-right">৳{product.unit_price}</td>
+                    <td className="px-4 py-3 text-center">
+                      {product.quantity}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      ৳{product.unit_price}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -212,7 +230,7 @@ const BillingDetails = () => {
           </div>
 
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             Continue Shopping
@@ -240,10 +258,18 @@ const BillingDetails = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Form Fields */}
                 {[
-                  { label: 'Name (নাম)', name: 'recipient_name', type: 'text' },
-                  { label: 'Email (ইমেইল)', name: 'recipient_email', type: 'email' },
-                  { label: 'Phone (মোবাইল)', name: 'recipient_phone', type: 'tel' },
-                  { label: 'City (শহর)', name: 'city', type: 'text' },
+                  { label: "Name (নাম)", name: "recipient_name", type: "text" },
+                  {
+                    label: "Email (ইমেইল)",
+                    name: "recipient_email",
+                    type: "email",
+                  },
+                  {
+                    label: "Phone (মোবাইল)",
+                    name: "recipient_phone",
+                    type: "tel",
+                  },
+                  { label: "City (শহর)", name: "city", type: "text" },
                 ].map((field) => (
                   <div key={field.name}>
                     <label className="block text-sm font-medium mb-2">
@@ -254,11 +280,15 @@ const BillingDetails = () => {
                       value={formData[field.name]}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border ${
-                        errors[field.name] ? 'border-red-500' : 'border-gray-300'
+                        errors[field.name]
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } focus:ring-2 focus:ring-indigo-500`}
                     />
                     {errors[field.name] && (
-                      <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[field.name]}
+                      </p>
                     )}
                   </div>
                 ))}
@@ -273,27 +303,41 @@ const BillingDetails = () => {
                     onChange={handleChange}
                     rows="3"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.recipient_address ? 'border-red-500' : 'border-gray-300'
+                      errors.recipient_address
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } focus:ring-2 focus:ring-indigo-500`}
                   />
                   {errors.recipient_address && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipient_address}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipient_address}
+                    </p>
                   )}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Delivery Options (ডেলিভারি অপশন)</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Delivery Options (ডেলিভারি অপশন)
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { value: 'insideDhaka', label: 'Inside Dhaka', price: 60 },
-                      { value: 'outsideDhaka', label: 'Outside Dhaka', price: 120 },
+                      {
+                        value: "insideDhaka",
+                        label: "Inside Dhaka",
+                        price: 60,
+                      },
+                      {
+                        value: "outsideDhaka",
+                        label: "Outside Dhaka",
+                        price: 120,
+                      },
                     ].map((option) => (
                       <label
                         key={option.value}
                         className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer ${
                           formData.delivery_option === option.value
-                            ? 'border-indigo-500 bg-indigo-50'
-                            : 'border-gray-300 hover:border-indigo-300'
+                            ? "border-indigo-500 bg-indigo-50"
+                            : "border-gray-300 hover:border-indigo-300"
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -307,7 +351,9 @@ const BillingDetails = () => {
                           />
                           <div>
                             <p className="font-medium">{option.label}</p>
-                            <p className="text-sm text-gray-500">৳{option.price}</p>
+                            <p className="text-sm text-gray-500">
+                              ৳{option.price}
+                            </p>
                           </div>
                         </div>
                         <Truck className="text-gray-400" />
@@ -315,7 +361,9 @@ const BillingDetails = () => {
                     ))}
                   </div>
                   {errors.delivery_option && (
-                    <p className="text-red-500 text-sm mt-1">{errors.delivery_option}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.delivery_option}
+                    </p>
                   )}
                 </div>
               </div>
@@ -325,35 +373,57 @@ const BillingDetails = () => {
                 <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
                 <div className="space-y-4">
                   {cartProducts.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center bg-gray-50 p-4 rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{item.product_name}</p>
                         <p className="text-sm text-gray-500">
                           Size: {item.size} | Qty: {item.quantity}
                         </p>
                       </div>
-                      <p className="font-medium">৳{item.totalAmount.toFixed(2)}</p>
+                      <p className="font-medium">
+                        ৳{item.totalAmount.toFixed(2)}
+                      </p>
                     </div>
                   ))}
 
                   <div className="space-y-2 pt-4">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>৳{cartProducts.reduce((sum, item) => sum + item.totalAmount, 0).toFixed(2)}</span>
+                      <span>
+                        ৳
+                        {cartProducts
+                          .reduce((sum, item) => sum + item.totalAmount, 0)
+                          .toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
-                      <span>৳{formData.delivery_option ? 
-                        (formData.delivery_option === 'insideDhaka' ? 60 : 120) : 0}
+                      <span>
+                        ৳
+                        {formData.delivery_option
+                          ? formData.delivery_option === "insideDhaka"
+                            ? 60
+                            : 120
+                          : 0}
                       </span>
                     </div>
                     <div className="flex justify-between font-bold pt-2">
                       <span>Total</span>
                       <span>
-                        ৳{(
-                          cartProducts.reduce((sum, item) => sum + item.totalAmount, 0) + 
-                          (formData.delivery_option === 'insideDhaka' ? 60 : 
-                           formData.delivery_option === 'outsideDhaka' ? 120 : 0)
+                        ৳
+                        {(
+                          cartProducts.reduce(
+                            (sum, item) => sum + item.totalAmount,
+                            0,
+                          ) +
+                          (formData.delivery_option === "insideDhaka"
+                            ? 60
+                            : formData.delivery_option === "outsideDhaka"
+                              ? 120
+                              : 0)
                         ).toFixed(2)}
                       </span>
                     </div>
@@ -378,7 +448,7 @@ const BillingDetails = () => {
                     Processing...
                   </div>
                 ) : (
-                  'Place Order (অর্ডার করুন)'
+                  "Place Order (অর্ডার করুন)"
                 )}
               </button>
             </form>
@@ -387,7 +457,10 @@ const BillingDetails = () => {
 
         <AnimatePresence>
           {showModal && orderDetails && (
-            <InvoiceModal order={orderDetails} onClose={() => setShowModal(false)} />
+            <InvoiceModal
+              order={orderDetails}
+              onClose={() => setShowModal(false)}
+            />
           )}
         </AnimatePresence>
       </div>
