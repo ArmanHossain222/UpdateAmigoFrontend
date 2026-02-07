@@ -70,8 +70,8 @@ const CheckoutPage = () => {
       formData.delivery_option === "Inside Dhaka"
         ? 60
         : formData.delivery_option === "Outside Dhaka"
-        ? 120
-        : 0;
+          ? 120
+          : 0;
 
     return {
       subtotal,
@@ -121,7 +121,7 @@ const CheckoutPage = () => {
       sessionStorage.setItem("orderDetails", JSON.stringify(orderData));
       localStorage.removeItem("carts");
       localStorage.removeItem("cart");
-      
+
       window.dataLayer.push({
         event: "purchase",
         ecommerce: {
@@ -143,7 +143,7 @@ const CheckoutPage = () => {
           },
         },
       });
-      
+
       navigate("/checkout/orderconfirmed");
     } catch (error) {
       setErrors({ submit: error.message });
@@ -234,9 +234,15 @@ const CheckoutPage = () => {
                   {order.products.map((product, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4">{product.product_name}</td>
-                      <td className="px-6 py-4 text-center">{product.variants}</td>
-                      <td className="px-6 py-4 text-center">{product.quantity}</td>
-                      <td className="px-6 py-4 text-right">৳{product.unit_price}</td>
+                      <td className="px-6 py-4 text-center">
+                        {product.variants}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {product.quantity}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        ৳{product.unit_price}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -246,11 +252,15 @@ const CheckoutPage = () => {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-700">Subtotal:</span>
-                <span className="text-gray-700">৳{order.subtotal.toFixed(2)}</span>
+                <span className="text-gray-700">
+                  ৳{order.subtotal.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700">Shipping:</span>
-                <span className="text-gray-700">৳{order.shipping_cost.toFixed(2)}</span>
+                <span className="text-gray-700">
+                  ৳{order.shipping_cost.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between font-bold border-t pt-4">
                 <span>Total:</span>
@@ -279,7 +289,7 @@ const CheckoutPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden mt-10"
         >
           <div className="p-8">
             <div className="flex items-center gap-4 mb-8 pb-6 border-b">
@@ -305,7 +315,9 @@ const CheckoutPage = () => {
                     } focus:ring-2 focus:ring-indigo-500`}
                   />
                   {errors.recipient_name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipient_name}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipient_name}
+                    </p>
                   )}
                 </div>
 
@@ -325,7 +337,9 @@ const CheckoutPage = () => {
                     } focus:ring-2 focus:ring-indigo-500`}
                   />
                   {errors.recipient_phone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipient_phone}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipient_phone}
+                    </p>
                   )}
                 </div>
 
@@ -346,12 +360,16 @@ const CheckoutPage = () => {
                     } focus:ring-2 focus:ring-indigo-500`}
                   />
                   {errors.recipient_address && (
-                    <p className="text-red-500 text-sm mt-1">{errors.recipient_address}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipient_address}
+                    </p>
                   )}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">ডেলিভারি অপশন (Delivery Options)</label>
+                  <label className="block text-sm font-medium mb-2">
+                    ডেলিভারি অপশন (Delivery Options)
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       {
@@ -384,7 +402,9 @@ const CheckoutPage = () => {
                           />
                           <div>
                             <p className="font-medium">{option.label}</p>
-                            <p className="text-sm text-gray-500">৳{option.price}</p>
+                            <p className="text-sm text-gray-500">
+                              ৳{option.price}
+                            </p>
                           </div>
                         </div>
                         <Truck className="text-gray-400" />
@@ -392,7 +412,9 @@ const CheckoutPage = () => {
                     ))}
                   </div>
                   {errors.delivery_option && (
-                    <p className="text-red-500 text-sm mt-1">{errors.delivery_option}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.delivery_option}
+                    </p>
                   )}
                 </div>
               </div>
@@ -407,37 +429,93 @@ const CheckoutPage = () => {
                     >
                       <div className="flex items-center gap-4">
                         <img
-                          src={item.photos?.[0]?.file_name ? `https://api.amigofabric.com/uploads/products/${item.photos?.[0]?.file_name}` : item.product_photo}
+                          src={
+                            item.photos?.[0]?.file_name
+                              ? `https://api.amigofabric.com/uploads/products/${item.photos?.[0]?.file_name}`
+                              : item.product_photo
+                          }
                           alt={item.product_name}
                           className="w-16 h-16 object-cover rounded-lg"
                         />
                         <div>
                           <p className="font-medium">{item.product_name}</p>
-                          <p className="text-sm text-gray-500">Variant: {item.size || item.variants} | Qty: {item.quantity}</p>
+                          <p className="text-sm text-gray-500">
+                            Variant: {item.size || item.variants} | Qty:{" "}
+                            {item.quantity}
+                          </p>
                         </div>
                       </div>
-                      <p className="font-medium">৳{((item.unit_price || item.offer_price || item.regular_price) * item.quantity).toFixed(2)}</p>
+                      <p className="font-medium">
+                        ৳
+                        {(
+                          (item.unit_price ||
+                            item.offer_price ||
+                            item.regular_price) * item.quantity
+                        ).toFixed(2)}
+                      </p>
                     </div>
                   ))}
 
                   <div className="space-y-2 pt-4">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>৳{cartProducts.reduce((sum, item) => sum + (parseFloat(item.offer_price || item.regular_price) * item.quantity), 0).toFixed(2)}</span>
+                      <span>
+                        ৳
+                        {cartProducts
+                          .reduce(
+                            (sum, item) =>
+                              sum +
+                              parseFloat(
+                                item.offer_price || item.regular_price,
+                              ) *
+                                item.quantity,
+                            0,
+                          )
+                          .toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
-                      <span>৳{formData.delivery_option === "Inside Dhaka" ? 60 : formData.delivery_option === "Outside Dhaka" ? 120 : 0}</span>
+                      <span>
+                        ৳
+                        {formData.delivery_option === "Inside Dhaka"
+                          ? 60
+                          : formData.delivery_option === "Outside Dhaka"
+                            ? 120
+                            : 0}
+                      </span>
                     </div>
                     <div className="flex justify-between font-bold pt-2">
                       <span>Total</span>
-                      <span>৳{(cartProducts.reduce((sum, item) => sum + (parseFloat(item.offer_price || item.regular_price) * item.quantity), 0) + (formData.delivery_option === "Inside Dhaka" ? 60 : formData.delivery_option === "Outside Dhaka" ? 120 : 0)).toFixed(2)}</span>
+                      <span>
+                        ৳
+                        {(
+                          cartProducts.reduce(
+                            (sum, item) =>
+                              sum +
+                              parseFloat(
+                                item.offer_price || item.regular_price,
+                              ) *
+                                item.quantity,
+                            0,
+                          ) +
+                          (formData.delivery_option === "Inside Dhaka"
+                            ? 60
+                            : formData.delivery_option === "Outside Dhaka"
+                              ? 120
+                              : 0)
+                        ).toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {errors.submit && <div className="bg-red-50 text-red-600 p-4 rounded-lg">{errors.submit}</div>}
+              {errors.submit && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+                  {errors.submit}
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -458,7 +536,12 @@ const CheckoutPage = () => {
         </motion.div>
 
         <AnimatePresence>
-          {showModal && orderDetails && <InvoiceModal order={orderDetails} onClose={() => setShowModal(false)} />}
+          {showModal && orderDetails && (
+            <InvoiceModal
+              order={orderDetails}
+              onClose={() => setShowModal(false)}
+            />
+          )}
         </AnimatePresence>
       </div>
     </div>

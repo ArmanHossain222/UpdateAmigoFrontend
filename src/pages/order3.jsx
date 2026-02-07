@@ -1,6 +1,14 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Truck, CheckCircle, MapPin, Calendar, X, Loader } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Calendar,
+  CheckCircle,
+  Loader,
+  MapPin,
+  ShoppingBag,
+  Truck,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const OrderCart = () => {
@@ -46,10 +54,12 @@ const OrderCart = () => {
       errorMessages.city = "শহর প্রয়োজন / City is required";
     }
     if (!phoneRegex.test(formData.recipient_phone)) {
-      errorMessages.recipient_phone = "সঠিক মোবাইল নম্বর লিখুন / Valid Bangladeshi phone number required";
+      errorMessages.recipient_phone =
+        "সঠিক মোবাইল নম্বর লিখুন / Valid Bangladeshi phone number required";
     }
     if (!formData.delivery_option) {
-      errorMessages.delivery_option = "ডেলিভারি অপশন নির্বাচন করুন / Select delivery option";
+      errorMessages.delivery_option =
+        "ডেলিভারি অপশন নির্বাচন করুন / Select delivery option";
     }
 
     setErrors(errorMessages);
@@ -59,16 +69,16 @@ const OrderCart = () => {
   const calculateTotals = () => {
     const subtotal = cartProducts.reduce((sum, item) => {
       if (item.offer_price) {
-        return sum + (parseFloat(item.offer_price) * parseInt(item.quantity));
+        return sum + parseFloat(item.offer_price) * parseInt(item.quantity);
       } else {
-        return sum + (parseFloat(item.regular_price) * parseInt(item.quantity));
+        return sum + parseFloat(item.regular_price) * parseInt(item.quantity);
       }
     }, 0);
     const shipping = formData.delivery_option === "steadfast" ? 60 : 120;
     return {
       subtotal,
       shipping_cost: shipping,
-      total: subtotal + shipping
+      total: subtotal + shipping,
     };
   };
 
@@ -87,14 +97,18 @@ const OrderCart = () => {
           product_name: product.product_name,
           quantity: product.quantity,
           variants: product.size,
-          unit_price: product.unit_price || product.offer_price || product.regular_price,
-          product_photo: product.photos?.[0]?.file_name || product.product_photo || "default-product.jpg"
+          unit_price:
+            product.unit_price || product.offer_price || product.regular_price,
+          product_photo:
+            product.photos?.[0]?.file_name ||
+            product.product_photo ||
+            "default-product.jpg",
         })),
         subtotal,
         shipping_cost,
         total,
         order_date: new Date().toISOString(),
-        order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+        order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       };
 
       console.log(orderData);
@@ -102,7 +116,7 @@ const OrderCart = () => {
       const response = await fetch("https://api.amigofabric.com/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(orderData),
       });
 
       if (!response.ok) throw new Error("Order submission failed");
@@ -143,7 +157,10 @@ const OrderCart = () => {
               </h2>
               <p className="text-gray-600 mt-1">Thank you for your purchase</p>
             </div>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <X size={24} />
             </button>
           </div>
@@ -162,7 +179,11 @@ const OrderCart = () => {
             <div className="space-y-2">
               <div className="flex items-center text-gray-600">
                 <Truck size={18} className="mr-2" />
-                <span>{order.delivery_option === "steadfast" ? "Steadfast Courier" : "Other Courier"}</span>
+                <span>
+                  {order.delivery_option === "steadfast"
+                    ? "Steadfast Courier"
+                    : "Other Courier"}
+                </span>
               </div>
               <div className="flex items-center text-gray-600">
                 <MapPin size={18} className="mr-2" />
@@ -185,9 +206,15 @@ const OrderCart = () => {
                 {order.products.map((product, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3">{product.product_name}</td>
-                    <td className="px-4 py-3 text-center">{product.variants}</td>
-                    <td className="px-4 py-3 text-center">{product.quantity}</td>
-                    <td className="px-4 py-3 text-right">৳{product.unit_price}</td>
+                    <td className="px-4 py-3 text-center">
+                      {product.variants}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {product.quantity}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      ৳{product.unit_price}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -226,7 +253,7 @@ const OrderCart = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden mt-10"
         >
           <div className="p-8">
             <div className="flex items-center gap-4 mb-8 pb-6 border-b">
@@ -238,23 +265,41 @@ const OrderCart = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   { label: "Name (নাম)", name: "recipient_name", type: "text" },
-                  { label: "Email (ইমেইল)", name: "recipient_email", type: "email" },
-                  { label: "Phone (মোবাইল)", name: "recipient_phone", type: "tel" },
+                  {
+                    label: "Email (ইমেইল)",
+                    name: "recipient_email",
+                    type: "email",
+                  },
+                  {
+                    label: "Phone (মোবাইল)",
+                    name: "recipient_phone",
+                    type: "tel",
+                  },
                   { label: "City (শহর)", name: "city", type: "text" },
-                  { label: "Coupon Code", name: "coupon_code", type: "text" }
+                  { label: "Coupon Code", name: "coupon_code", type: "text" },
                 ].map((field) => (
                   <div key={field.name}>
                     <label className="block text-sm font-medium mb-2">
-                      {field.label} {field.name !== "coupon_code" && <span className="text-red-500">*</span>}
+                      {field.label}{" "}
+                      {field.name !== "coupon_code" && (
+                        <span className="text-red-500">*</span>
+                      )}
                     </label>
                     <input
                       {...field}
                       value={formData[field.name]}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${errors[field.name] ? "border-red-500" : "border-gray-300"
-                        } focus:ring-2 focus:ring-indigo-500`}
+                      className={`w-full px-4 py-3 rounded-lg border ${
+                        errors[field.name]
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500`}
                     />
-                    {errors[field.name] && <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>}
+                    {errors[field.name] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[field.name]}
+                      </p>
+                    )}
                   </div>
                 ))}
 
@@ -267,25 +312,39 @@ const OrderCart = () => {
                     value={formData.recipient_address}
                     onChange={handleChange}
                     rows="3"
-                    className={`w-full px-4 py-3 rounded-lg border ${errors.recipient_address ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500`}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.recipient_address
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } focus:ring-2 focus:ring-indigo-500`}
                   />
-                  {errors.recipient_address && <p className="text-red-500 text-sm mt-1">{errors.recipient_address}</p>}
+                  {errors.recipient_address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipient_address}
+                    </p>
+                  )}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Delivery Options (ডেলিভারি অপশন)</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Delivery Options (ডেলিভারি অপশন)
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { value: "steadfast", label: "Steadfast Courier", price: 60 },
+                      {
+                        value: "steadfast",
+                        label: "Steadfast Courier",
+                        price: 60,
+                      },
                       { value: "other", label: "Other Courier", price: 120 },
                     ].map((option) => (
                       <label
                         key={option.value}
-                        className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer ${formData.delivery_option === option.value
-                          ? "border-indigo-500 bg-indigo-50"
-                          : "border-gray-300 hover:border-indigo-300"
-                          }`}
+                        className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer ${
+                          formData.delivery_option === option.value
+                            ? "border-indigo-500 bg-indigo-50"
+                            : "border-gray-300 hover:border-indigo-300"
+                        }`}
                       >
                         <div className="flex items-center gap-3">
                           <input
@@ -298,14 +357,20 @@ const OrderCart = () => {
                           />
                           <div>
                             <p className="font-medium">{option.label}</p>
-                            <p className="text-sm text-gray-500">৳{option.price}</p>
+                            <p className="text-sm text-gray-500">
+                              ৳{option.price}
+                            </p>
                           </div>
                         </div>
                         <Truck className="text-gray-400" />
                       </label>
                     ))}
                   </div>
-                  {errors.delivery_option && <p className="text-red-500 text-sm mt-1">{errors.delivery_option}</p>}
+                  {errors.delivery_option && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.delivery_option}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -313,7 +378,10 @@ const OrderCart = () => {
                 <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
                 <div className="space-y-4">
                   {cartProducts.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center bg-gray-50 p-4 rounded-lg"
+                    >
                       <div className="flex items-center gap-4">
                         <img
                           src={`https://api.amigofabric.com/uploads/products/${item.photos[0].file_name}`}
@@ -323,11 +391,21 @@ const OrderCart = () => {
                         <div>
                           <p className="font-medium">{item.product_name}</p>
                           <p className="text-sm text-gray-500">
-                            Size: {item.variants || item.size} | Qty: {item.quantity}
+                            Size: {item.variants || item.size} | Qty:{" "}
+                            {item.quantity}
                           </p>
                         </div>
                       </div>
-                      <p className="font-medium">৳{item.offer_price ? (parseFloat(item.offer_price) * parseInt(item.quantity)).toFixed(2) : parseFloat(item.regular_price) * parseInt(item.quantity).toFixed(2)}</p>
+                      <p className="font-medium">
+                        ৳
+                        {item.offer_price
+                          ? (
+                              parseFloat(item.offer_price) *
+                              parseInt(item.quantity)
+                            ).toFixed(2)
+                          : parseFloat(item.regular_price) *
+                            parseInt(item.quantity).toFixed(2)}
+                      </p>
                     </div>
                   ))}
 
@@ -339,7 +417,12 @@ const OrderCart = () => {
                     <div className="flex justify-between">
                       <span>Shipping</span>
                       <span>
-                        ৳{formData.delivery_option ? (formData.delivery_option === "steadfast" ? 60 : 120) : 0}
+                        ৳
+                        {formData.delivery_option
+                          ? formData.delivery_option === "steadfast"
+                            ? 60
+                            : 120
+                          : 0}
                       </span>
                     </div>
                     {/* {formData.coupon_code && (
@@ -350,9 +433,7 @@ const OrderCart = () => {
                     )} */}
                     <div className="flex justify-between font-bold pt-2 border-t">
                       <span>Total</span>
-                      <span>
-                        ৳{calculateTotals().total.toFixed(2)}
-                      </span>
+                      <span>৳{calculateTotals().total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -384,7 +465,10 @@ const OrderCart = () => {
 
         <AnimatePresence>
           {showModal && orderDetails && (
-            <InvoiceModal order={orderDetails} onClose={() => setShowModal(false)} />
+            <InvoiceModal
+              order={orderDetails}
+              onClose={() => setShowModal(false)}
+            />
           )}
         </AnimatePresence>
       </div>

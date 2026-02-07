@@ -1,14 +1,20 @@
-
-
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ShoppingBag, Truck, CheckCircle, MapPin, Calendar, X, Loader } from "lucide-react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Calendar,
+  CheckCircle,
+  Loader,
+  MapPin,
+  ShoppingBag,
+  Truck,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BillingDetails2 = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [showModal, setShowModal] = useState(false)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     recipient_name: "",
     recipient_address: "",
@@ -17,64 +23,67 @@ const BillingDetails2 = () => {
     city: "",
     delivery_option: "",
     additional_notes: "",
-  })
+  });
 
-  const [errors, setErrors] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [orderDetails, setOrderDetails] = useState(null)
-  const [cartProducts, setCartProducts] = useState([])
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [cartProducts, setCartProducts] = useState([]);
 
-  console.log(location)
+  console.log(location);
 
   useEffect(() => {
     // Fetch product from localStorage
-    const storedProduct = JSON.parse(localStorage.getItem("singleproduct"))
+    const storedProduct = JSON.parse(localStorage.getItem("singleproduct"));
 
     if (storedProduct) {
       const formattedProduct = {
         ...storedProduct,
         unit_price: Number.parseFloat(storedProduct.offer_price),
-        totalAmount: Number.parseFloat(storedProduct.offer_price) * storedProduct.quantity,
+        totalAmount:
+          Number.parseFloat(storedProduct.offer_price) * storedProduct.quantity,
         image: storedProduct.photos?.[0]?.file_name || "default-product.jpg",
-      }
-      setCartProducts([formattedProduct])
+      };
+      setCartProducts([formattedProduct]);
     } else {
-      setErrors({ submit: "No product found in the order" })
+      setErrors({ submit: "No product found in the order" });
     }
-  }, [])
+  }, []);
 
   const validateForm = () => {
-    const errorMessages = {}
-    const phoneRegex = /^01\d{9}$/
+    const errorMessages = {};
+    const phoneRegex = /^01\d{9}$/;
 
     if (!formData.recipient_name) {
-      errorMessages.recipient_name = "নাম প্রয়োজন / Name is required"
+      errorMessages.recipient_name = "নাম প্রয়োজন / Name is required";
     }
     if (!formData.recipient_address) {
-      errorMessages.recipient_address = "ঠিকানা প্রয়োজন / Address is required"
+      errorMessages.recipient_address = "ঠিকানা প্রয়োজন / Address is required";
     }
     if (!formData.recipient_email) {
-      errorMessages.recipient_email = "ইমেইল প্রয়োজন / Email is required"
+      errorMessages.recipient_email = "ইমেইল প্রয়োজন / Email is required";
     }
     if (!formData.city) {
-      errorMessages.city = "শহর প্রয়োজন / City is required"
+      errorMessages.city = "শহর প্রয়োজন / City is required";
     }
     if (!phoneRegex.test(formData.recipient_phone)) {
-      errorMessages.recipient_phone = "সঠিক মোবাইল নম্বর লিখুন / Valid Bangladeshi phone number required"
+      errorMessages.recipient_phone =
+        "সঠিক মোবাইল নম্বর লিখুন / Valid Bangladeshi phone number required";
     }
     if (!formData.delivery_option) {
-      errorMessages.delivery_option = "ডেলিভারি অপশন নির্বাচন করুন / Select delivery option"
+      errorMessages.delivery_option =
+        "ডেলিভারি অপশন নির্বাচন করুন / Select delivery option";
     }
 
-    setErrors(errorMessages)
-    return Object.keys(errorMessages).length === 0
-  }
+    setErrors(errorMessages);
+    return Object.keys(errorMessages).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!validateForm()) return
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       const orderData = {
         ...formData,
@@ -91,32 +100,32 @@ const BillingDetails2 = () => {
         subtotal: cartProducts.reduce((sum, item) => sum + item.totalAmount, 0),
         shipping_cost: formData.delivery_option === "insideDhaka" ? 60 : 120,
         total: 0,
-      }
+      };
 
-      orderData.total = orderData.subtotal + orderData.shipping_cost
+      orderData.total = orderData.subtotal + orderData.shipping_cost;
 
       const response = await fetch("https://api.amigofabric.com/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
-      })
+      });
 
-      if (!response.ok) throw new Error("Order submission failed")
+      if (!response.ok) throw new Error("Order submission failed");
 
-      setOrderDetails(orderData)
-      setShowModal(true)
+      setOrderDetails(orderData);
+      setShowModal(true);
     } catch (error) {
-      setErrors({ submit: error.message })
+      setErrors({ submit: error.message });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
 
   const InvoiceModal = ({ order, onClose }) => (
     <motion.div
@@ -138,7 +147,10 @@ const BillingDetails2 = () => {
               </h2>
               <p className="text-gray-600 mt-1">Thank you for your purchase</p>
             </div>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <X size={24} />
             </button>
           </div>
@@ -157,7 +169,11 @@ const BillingDetails2 = () => {
             <div className="space-y-2">
               <div className="flex items-center text-gray-600">
                 <Truck size={18} className="mr-2" />
-                <span>{order.delivery_option === "insideDhaka" ? "Inside Dhaka" : "Outside Dhaka"}</span>
+                <span>
+                  {order.delivery_option === "insideDhaka"
+                    ? "Inside Dhaka"
+                    : "Outside Dhaka"}
+                </span>
               </div>
               <div className="flex items-center text-gray-600">
                 <MapPin size={18} className="mr-2" />
@@ -181,8 +197,12 @@ const BillingDetails2 = () => {
                   <tr key={index}>
                     <td className="px-4 py-3">{product.product_name}</td>
                     <td className="px-4 py-3 text-center">{product.size}</td>
-                    <td className="px-4 py-3 text-center">{product.quantity}</td>
-                    <td className="px-4 py-3 text-right">৳{product.unit_price}</td>
+                    <td className="px-4 py-3 text-center">
+                      {product.quantity}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      ৳{product.unit_price}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -213,7 +233,7 @@ const BillingDetails2 = () => {
         </div>
       </motion.div>
     </motion.div>
-  )
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50 py-12">
@@ -221,7 +241,7 @@ const BillingDetails2 = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden mt-10"
         >
           <div className="p-8">
             <div className="flex items-center gap-4 mb-8 pb-6 border-b">
@@ -234,8 +254,16 @@ const BillingDetails2 = () => {
                 {/* Form Fields */}
                 {[
                   { label: "Name (নাম)", name: "recipient_name", type: "text" },
-                  { label: "Email (ইমেইল)", name: "recipient_email", type: "email" },
-                  { label: "Phone (মোবাইল)", name: "recipient_phone", type: "tel" },
+                  {
+                    label: "Email (ইমেইল)",
+                    name: "recipient_email",
+                    type: "email",
+                  },
+                  {
+                    label: "Phone (মোবাইল)",
+                    name: "recipient_phone",
+                    type: "tel",
+                  },
                   { label: "City (শহর)", name: "city", type: "text" },
                 ].map((field) => (
                   <div key={field.name}>
@@ -247,10 +275,16 @@ const BillingDetails2 = () => {
                       value={formData[field.name]}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border ${
-                        errors[field.name] ? "border-red-500" : "border-gray-300"
+                        errors[field.name]
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } focus:ring-2 focus:ring-indigo-500`}
                     />
-                    {errors[field.name] && <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>}
+                    {errors[field.name] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[field.name]}
+                      </p>
+                    )}
                   </div>
                 ))}
 
@@ -264,18 +298,34 @@ const BillingDetails2 = () => {
                     onChange={handleChange}
                     rows="3"
                     className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.recipient_address ? "border-red-500" : "border-gray-300"
+                      errors.recipient_address
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } focus:ring-2 focus:ring-indigo-500`}
                   />
-                  {errors.recipient_address && <p className="text-red-500 text-sm mt-1">{errors.recipient_address}</p>}
+                  {errors.recipient_address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.recipient_address}
+                    </p>
+                  )}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-2">Delivery Options (ডেলিভারি অপশন)</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Delivery Options (ডেলিভারি অপশন)
+                  </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
-                      { value: "insideDhaka", label: "Inside Dhaka", price: 60 },
-                      { value: "outsideDhaka", label: "Outside Dhaka", price: 120 },
+                      {
+                        value: "insideDhaka",
+                        label: "Inside Dhaka",
+                        price: 60,
+                      },
+                      {
+                        value: "outsideDhaka",
+                        label: "Outside Dhaka",
+                        price: 120,
+                      },
                     ].map((option) => (
                       <label
                         key={option.value}
@@ -296,14 +346,20 @@ const BillingDetails2 = () => {
                           />
                           <div>
                             <p className="font-medium">{option.label}</p>
-                            <p className="text-sm text-gray-500">৳{option.price}</p>
+                            <p className="text-sm text-gray-500">
+                              ৳{option.price}
+                            </p>
                           </div>
                         </div>
                         <Truck className="text-gray-400" />
                       </label>
                     ))}
                   </div>
-                  {errors.delivery_option && <p className="text-red-500 text-sm mt-1">{errors.delivery_option}</p>}
+                  {errors.delivery_option && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.delivery_option}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -312,7 +368,10 @@ const BillingDetails2 = () => {
                 <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
                 <div className="space-y-4">
                   {cartProducts.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center bg-gray-50 p-4 rounded-lg"
+                    >
                       <div className="flex items-center gap-4">
                         <img
                           src={`https://api.amigofabric.com/uploads/products/${item.image}`}
@@ -326,19 +385,31 @@ const BillingDetails2 = () => {
                           </p>
                         </div>
                       </div>
-                      <p className="font-medium">৳{item.totalAmount.toFixed(2)}</p>
+                      <p className="font-medium">
+                        ৳{item.totalAmount.toFixed(2)}
+                      </p>
                     </div>
                   ))}
 
                   <div className="space-y-2 pt-4">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>৳{cartProducts.reduce((sum, item) => sum + item.totalAmount, 0).toFixed(2)}</span>
+                      <span>
+                        ৳
+                        {cartProducts
+                          .reduce((sum, item) => sum + item.totalAmount, 0)
+                          .toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
                       <span>
-                        ৳{formData.delivery_option ? (formData.delivery_option === "insideDhaka" ? 60 : 120) : 0}
+                        ৳
+                        {formData.delivery_option
+                          ? formData.delivery_option === "insideDhaka"
+                            ? 60
+                            : 120
+                          : 0}
                       </span>
                     </div>
                     <div className="flex justify-between font-bold pt-2">
@@ -346,7 +417,10 @@ const BillingDetails2 = () => {
                       <span>
                         ৳
                         {(
-                          cartProducts.reduce((sum, item) => sum + item.totalAmount, 0) +
+                          cartProducts.reduce(
+                            (sum, item) => sum + item.totalAmount,
+                            0,
+                          ) +
                           (formData.delivery_option === "insideDhaka"
                             ? 60
                             : formData.delivery_option === "outsideDhaka"
@@ -359,7 +433,11 @@ const BillingDetails2 = () => {
                 </div>
               </div>
 
-              {errors.submit && <div className="bg-red-50 text-red-600 p-4 rounded-lg">{errors.submit}</div>}
+              {errors.submit && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+                  {errors.submit}
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -380,11 +458,16 @@ const BillingDetails2 = () => {
         </motion.div>
 
         <AnimatePresence>
-          {showModal && orderDetails && <InvoiceModal order={orderDetails} onClose={() => setShowModal(false)} />}
+          {showModal && orderDetails && (
+            <InvoiceModal
+              order={orderDetails}
+              onClose={() => setShowModal(false)}
+            />
+          )}
         </AnimatePresence>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BillingDetails2
+export default BillingDetails2;

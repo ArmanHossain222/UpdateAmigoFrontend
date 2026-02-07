@@ -246,7 +246,7 @@ const BillingDetails = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden mt-10"
         >
           <div className="p-8">
             <div className="flex items-center gap-4 mb-8 pb-6 border-b">

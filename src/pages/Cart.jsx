@@ -40,7 +40,7 @@ const CartPage = () => {
           ...acc,
           [item.id]: item.size || "",
         }),
-        {}
+        {},
       );
 
       setCart(savedCart);
@@ -57,7 +57,7 @@ const CartPage = () => {
         (item.offer_price
           ? item.offer_price * item.quantity
           : item.regular_price * item.quantity),
-      0
+      0,
     );
     setTotal(total);
   };
@@ -71,7 +71,7 @@ const CartPage = () => {
   const handleQuantity = (id, newQty) => {
     const updated = cart
       .map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, newQty) } : item
+        item.id === id ? { ...item, quantity: Math.max(1, newQty) } : item,
       )
       .filter((item) => item.quantity > 0);
     updateCart(updated);
@@ -306,7 +306,7 @@ const CartPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden mt-10"
         >
           <div className="p-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-8 mb-8 border-b">

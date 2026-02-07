@@ -44,13 +44,13 @@ const ProductDetails = () => {
     const fetchProductDetails = async () => {
       try {
         const { data } = await axios.get(
-          `https://api.amigofabric.com/api/product/${product_id}`
+          `https://api.amigofabric.com/api/product/${product_id}`,
         );
         if (data.status === 200) {
           setProduct(data.product);
           if (data.product.photos?.length) {
             setSelectedImage(
-              `https://api.amigofabric.com/uploads/products/${data.product.photos[0].file_name}`
+              `https://api.amigofabric.com/uploads/products/${data.product.photos[0].file_name}`,
             );
           }
         }
@@ -94,7 +94,7 @@ const ProductDetails = () => {
     if (actionType === "addToCart") {
       const existingItems = JSON.parse(localStorage.getItem("cart") || "[]");
       const existingIndex = existingItems.findIndex(
-        (item) => item.id === product.id && item.size === selectedSize
+        (item) => item.id === product.id && item.size === selectedSize,
       );
       if (existingIndex > -1) {
         existingItems[existingIndex].quantity += quantity;
@@ -207,7 +207,7 @@ const ProductDetails = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white rounded-2xl shadow-xl overflow-hidden mt-10"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
             {/* Image Gallery Section */}
@@ -233,7 +233,7 @@ const ProductDetails = () => {
                     whileHover={{ scale: 1.05 }}
                     onClick={() =>
                       setSelectedImage(
-                        `https://api.amigofabric.com/uploads/products/${photo.file_name}`
+                        `https://api.amigofabric.com/uploads/products/${photo.file_name}`,
                       )
                     }
                   >
@@ -280,7 +280,7 @@ const ProductDetails = () => {
                     {Math.round(
                       ((product.regular_price - product.offer_price) /
                         product.regular_price) *
-                        100
+                        100,
                     )}
                     % Off
                   </span>
